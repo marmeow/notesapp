@@ -1,9 +1,6 @@
+from enum import StrEnum  # noqa: INP001
 
-from typing import Optional
 from pydantic import BaseModel
-from enum import StrEnum
-from uuid import uuid4
-
 
 
 class Tag(StrEnum):
@@ -11,25 +8,30 @@ class Tag(StrEnum):
     PROJECT = "Project"
     OTHER = "Other"
 
+
 class Task(BaseModel):
+    id: int
     titol: str
-    isDone: bool
+    is_done: bool
     tipus: Tag
-    deadline: str
-    reminder: str
-    isSelected: bool
+    deadline: str | None
+    reminder: str | None
+    is_selected: bool
+
 
 class Nota(BaseModel):
     titol: str
-    preview: str
-    hasTasks: bool
-    numLinks: int
-    tags: Optional[Tag] 
-    numTags: int
+    contingut: str
+    has_tasks: bool
+    num_links: int
+    tags: Tag | None
+    num_tags: int
     time: str
-    notebook: str 
-    hasAlarm: bool 
-    isShared: bool 
-    imgPreview: Optional[str]
-    isActive:bool
+    notebook: str
+    has_alarm: bool
+    is_shared: bool
+    is_active: bool
     tasks: list[Task]
+    tasks_id: list[int]
+    last_edit: str
+    images: list[str] | None

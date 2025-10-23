@@ -1,0 +1,14 @@
+{
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "editor.formatOnSave": true,
+    "ruff.enable": true,
+    "ruff.codeAction.fixViolation": {
+        "enable": true
+    },
+    "ruff.lint.enable": true,
+    "ruff.fixAll": true,
+    "ruff.organizeImports": true,
+    "ruff.showSyntaxErrors": true,
+}

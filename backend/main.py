@@ -1,11 +1,9 @@
-# uvicorn main:app --reload
+# uvicorn main:app --reload  # noqa: INP001
 
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
-from models import Nota
 from data import nota_list
-
-
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from models import Nota
 
 app = FastAPI()
 app.add_middleware(
@@ -20,5 +18,3 @@ app.add_middleware(
 @app.get("/notes")
 async def get_notes() -> list[Nota]:
     return nota_list
-
-
