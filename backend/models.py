@@ -9,6 +9,13 @@ class Tag(StrEnum):
     OTHER = "Other"
 
 
+"""
+class Contingut(StrEnum):
+    text:str
+    link:str
+"""
+
+
 class Task(BaseModel):
     id: int
     titol: str
@@ -20,8 +27,10 @@ class Task(BaseModel):
 
 
 class Nota(BaseModel):
+    id: int
     titol: str
     contingut: str
+    link: str | None
     has_tasks: bool
     num_links: int
     tags: Tag | None

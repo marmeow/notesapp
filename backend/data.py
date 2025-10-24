@@ -5,7 +5,7 @@ task_list: list[Task] = [
         id=1,
         titol="Task example",
         tipus=Tag.PROJECT,
-        deadline="Deadline 21 Dec",
+        deadline="21 Dec",
         reminder="20 Dec, 9:00 AM",
         is_selected=True,
         is_done=False,
@@ -14,7 +14,7 @@ task_list: list[Task] = [
         id=2,
         titol="Dummy 101",
         tipus=Tag.PERSONAL,
-        deadline="Deadline 21 Dec",
+        deadline="21 Dec",
         reminder="20 Dec, 9:00 AM",
         is_selected=False,
         is_done=False,
@@ -26,11 +26,11 @@ task_list: list[Task] = [
         deadline=None,
         reminder=None,
         is_selected=False,
-        is_done=False,
+        is_done=True,
     ),  # ejemeplo nota
     Task(
         id=4,
-        titol="Test 123",
+        titol="Test 456",
         tipus=Tag.OTHER,
         deadline=None,
         reminder=None,
@@ -42,8 +42,10 @@ task_list: list[Task] = [
 
 nota_list: list[Nota] = [
     Nota(
+        id=1,
         titol="Brainstorming Session Highlights",
-        contingut="Capture your team's best ideas here.",
+        contingut="Capture your team's best ideas here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link="https://contoso.sharepoint.com/sites/Admins.... exemple link created",
         tasks=task_list,
         tasks_id=[1, 2, 3],
         has_tasks=True,
@@ -59,8 +61,10 @@ nota_list: list[Nota] = [
         last_edit="Dec 13, 2021",
     ),
     Nota(
+        id=2,
         titol="Helping a local business",
-        contingut="Amet minim mollit non deserunt illemco est",
+        contingut="Amet minim mollit non deserunt illemco est Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link=None,
         tasks=task_list,
         tasks_id=[1, 2, 3],
         has_tasks=True,
@@ -76,8 +80,10 @@ nota_list: list[Nota] = [
         last_edit="Dec 13, 2021",
     ),
     Nota(
+        id=3,
         titol="Weekly Team Update",
-        contingut="Document this week's accomplishments, challenges",
+        contingut="Document this week's accomplishments, challenges . . . .Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link="https://www.google.com/",
         tasks=task_list,
         tasks_id=[1, 2, 3],
         has_tasks=False,
@@ -93,8 +99,10 @@ nota_list: list[Nota] = [
         last_edit="Dec 13, 2021",
     ),
     Nota(
+        id=4,
         titol="Streamline Your Workflow with a good environment",
         contingut="In today's fast-paced environment, staying organized is the key to succedd. Use this space to jot down important ideas, action plans, or meeting notes. With integrated task mangament, you can turn your thoughts into actionable steps with deadlines and labels. Keep your team aligned by sharing updates and progress in real-time. Stay ahead prioritizing what matters the most.",  # noqa: E501
+        link="https://www.mozilla.org/es-ES/",
         tasks=task_list,
         tasks_id=[1, 2, 3],
         has_tasks=True,
@@ -110,10 +118,12 @@ nota_list: list[Nota] = [
         last_edit="Dec 13, 2021",
     ),
     Nota(
+        id=5,
         titol="Client Meeting Notes",
-        contingut="Keep a record of all client interactions in one place",
+        contingut="Keep a record of all client interactions in one place. \n Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link=None,
         tasks=task_list,
-        tasks_id=[1, 2, 3],
+        tasks_id=[1, 2],
         has_tasks=True,
         num_links=3,
         tags=Tag.PERSONAL,
@@ -124,11 +134,13 @@ nota_list: list[Nota] = [
         is_shared=False,
         is_active=False,
         images=None,
-        last_edit="Dec 13, 2021",
+        last_edit="Feb 23, 2022",
     ),
     Nota(
+        id=6,
         titol="Project Kickoff Plan",
-        contingut="Lay out the initial roadmap for your ner project.",
+        contingut="Lay out the initial roadmap for your ner project. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link="https://www.mozilla.org/es-ES/",
         tasks=task_list,
         tasks_id=[1, 2, 3],
         has_tasks=True,
@@ -144,8 +156,10 @@ nota_list: list[Nota] = [
         last_edit="Dec 13, 2021",
     ),  # ejemplo para tasks
     Nota(
+        id=7,
         titol="Ejemplo tasks",
-        contingut="Ejemplo para ver como relacionar determinadas tareas con determinadas notas",
+        contingut="Ejemplo para ver como relacionar determinadas tareas con determinadas notas. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        link=None,
         tasks=task_list,
         tasks_id=[4],
         has_tasks=True,
@@ -157,7 +171,7 @@ nota_list: list[Nota] = [
         has_alarm=False,
         is_shared=False,
         is_active=False,
-        images=None,
+        images=["livingroom2.jpg", "livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
 ]

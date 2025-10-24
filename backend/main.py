@@ -18,3 +18,12 @@ app.add_middleware(
 @app.get("/notes")
 async def get_notes() -> list[Nota]:
     return nota_list
+
+
+# cuando se hace click en la nota en el froont se guarda el atributo data-id y eso se envia a note_id, añadir algun error si no se envuentra  # noqa: E501
+@app.get("/notes/{note_id}")
+async def get_note(note_id: int) -> Nota | None:
+    for nota in nota_list:
+        if nota.id == note_id:
+            return nota
+    return None
