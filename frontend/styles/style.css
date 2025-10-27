@@ -308,10 +308,11 @@ nav .fa-link {
 .nota {
     cursor: pointer;
     border-bottom: var(--border);
-    padding: 1.25rem 1.875rem;
+    padding: 1.25rem 28px;
     align-items: flex-start;
     gap: 1rem;
     display: flex;
+    border-left: 3px solid transparent;
 }
 
 #notes-list {
@@ -467,7 +468,7 @@ nav .fa-link {
 }
 
 .img-note-preview {
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: flex-start;
     flex-shrink: 0;
 }
@@ -624,6 +625,7 @@ p.time-detail {
 .note-content img {
     width: 100%;
     border-radius: var(--btn-radius);
+    margin-bottom: 20px;
 }
 
 /* CHECKBOXES */

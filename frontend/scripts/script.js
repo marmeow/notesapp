@@ -20,12 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
         closeBtn.style.display = "none";
     });
 
-    window.addEventListener("resize", function () {
-        if (window.innerWidth > 1080) {
-            notePanel.style.display = "";
-            closeBtn.style.display = "";
-        }
-    });
+
 
 
     //https://www.w3schools.com/howto/howto_js_off-canvas.asp
@@ -73,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dropdownMenu.classList.toggle("show");
     });
 
-    // Cierra el menú si haces clic fuera
+    // Cierra el menú si haces click fuera
     window.addEventListener("click", function () {
         if (dropdownMenu.classList.contains("show")) {
             dropdownMenu.classList.remove("show");

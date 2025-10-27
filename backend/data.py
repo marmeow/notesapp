@@ -26,7 +26,7 @@ task_list: list[Task] = [
         deadline=None,
         reminder=None,
         is_selected=False,
-        is_done=True,
+        is_done=False,
     ),  # ejemeplo nota
     Task(
         id=4,
@@ -56,7 +56,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=True,
         is_shared=False,
-        is_active=False,
         images=["livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
@@ -75,7 +74,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=False,
         is_shared=False,
-        is_active=False,
         images=["livingroom2.jpg"],
         last_edit="Dec 13, 2021",
     ),
@@ -94,7 +92,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=False,
         is_shared=False,
-        is_active=False,
         images=None,
         last_edit="Dec 13, 2021",
     ),
@@ -113,7 +110,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=True,
         is_shared=True,
-        is_active=True,
         images=["livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
@@ -132,7 +128,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=False,
         is_shared=False,
-        is_active=False,
         images=None,
         last_edit="Feb 23, 2022",
     ),
@@ -151,14 +146,13 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=False,
         is_shared=False,
-        is_active=False,
         images=None,
         last_edit="Dec 13, 2021",
     ),  # ejemplo para tasks
     Nota(
         id=7,
         titol="Ejemplo tasks",
-        contingut="Ejemplo para ver como relacionar determinadas tareas con determinadas notas. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
+        contingut="Ejemplo !!!!!!!!!!!!!!!!!!!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link=None,
         tasks=task_list,
         tasks_id=[4],
@@ -170,7 +164,6 @@ nota_list: list[Nota] = [
         notebook="NoteBook-01",
         has_alarm=False,
         is_shared=False,
-        is_active=False,
         images=["livingroom2.jpg", "livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),

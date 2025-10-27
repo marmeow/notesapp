@@ -39,7 +39,6 @@ class Nota(BaseModel):
     notebook: str
     has_alarm: bool
     is_shared: bool
-    is_active: bool
     tasks: list[Task]
     tasks_id: list[int]
     last_edit: str
