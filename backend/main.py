@@ -35,4 +35,5 @@ async def update_task(
     if nota and task_id in nota.tasks:
         nota.tasks[task_id].is_done = is_done
         return nota.tasks[task_id]
+
     return None

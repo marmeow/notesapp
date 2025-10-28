@@ -26,7 +26,7 @@ task_dict: dict[int, Task] = {
         reminder=None,
         is_selected=False,
         is_done=False,
-    ),
+    ),  # ejemplo nota
     4: Task(
         titol="Test 456",
         tipus=Tag.OTHER,
@@ -78,7 +78,7 @@ note_dict: dict[int, Nota] = {
         contingut="Document this week's accomplishments, challenges . . . .Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link="https://www.google.com/",
         tasks=deepcopy(task_dict),
-        tasks_id=[1, 2, 3],
+        tasks_id=[],
         has_tasks=False,
         num_links=0,
         tags=None,

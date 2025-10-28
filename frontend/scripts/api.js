@@ -57,7 +57,7 @@ function noteEvents() {
 }
 
 
-async function updateTaskStatus(noteId, taskId, isChecked) {
+async function updateTask(noteId, taskId, isChecked) {
   try {
     const res = await fetch(`http://localhost:8000/notes/${noteId}/tasks/${taskId}`, {
       method: "PATCH",
@@ -67,9 +67,9 @@ async function updateTaskStatus(noteId, taskId, isChecked) {
       body: JSON.stringify({ is_done: isChecked }),
     });
     const updatedTask = await res.json();
-    console.log("Tarea actualizada:", updatedTask);
+    console.log(updatedTask);
   } catch (error) {
-    console.error("Error al actualitzar la task:", error);
+    console.error("Error en actualitzar la tasca:", error);
   }
 }
 
@@ -128,16 +128,16 @@ function createNote(notes) {
 
 /*--- ESTAT TASKS ---*/
 function eventsCheckbox() {
-  // controla eventos del checbox 
+  // controla eventos checbox 
   const checkboxes = document.querySelectorAll("input[type=\"checkbox\"][data-task-id]");
 
   checkboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", async () => {
+    checkbox.addEventListener("change", () => {
       const taskId = checkbox.getAttribute("data-task-id");
       const noteId = checkbox.getAttribute("data-note-id");
       const isChecked = checkbox.checked;
 
-      updateTaskStatus(noteId, taskId, isChecked);
+      updateTask(noteId, taskId, isChecked);
       updateTaskCounters(noteId);
     });
   });
@@ -145,43 +145,42 @@ function eventsCheckbox() {
 
 function updateTaskCounters(noteId) {
   // actualiza contador 
-  const noteElements = document.querySelectorAll(`.nota[data-id="${noteId}"]`);
+  const noteElement = document.querySelectorAll(`.nota[data-id="${noteId}"]`);
   const checkboxes = document.querySelectorAll(`input[type="checkbox"][data-note-id="${noteId}"]`);
 
-  let completedCount = 0;
-  let totalCount = 0;
+  let count = 0;
+  let total = 0;
 
   checkboxes.forEach(cb => {
-    totalCount++;
-    if (cb.checked) completedCount++;
+    total++;
+    if (cb.checked) count++;
   });
 
-  noteElements.forEach(elem => {
+  noteElement.forEach(elem => {
     const counters = elem.querySelectorAll(`.task-details[data-nota-id="${noteId}"] .task-num-top`);
     counters.forEach(counter => {
-      counter.textContent = `${completedCount}/${totalCount}`;
+      counter.textContent = `${count}/${total}`;
     });
   });
 }
 
 function createNumTasksDiv(nota, noteId, isTop) {
-  // crea el html inicial del contador 
-  let completedCount = 0;
+  // crea html inicial del contador 
+  let count = 0;
 
   Object.entries(nota.tasks).forEach(([taskId, task]) => {
     if (nota.tasks_id.includes(parseInt(taskId)) && task.is_done) {
-      completedCount++;
+      count++;
     }
   });
 
-  const totalCount = nota.tasks_id.length;
   const topClass = isTop ? "extra-details-top" : "";
 
-  if (nota.has_tasks && totalCount > 0) {
+  if (nota.has_tasks && nota.tasks_id.length > 0) {
     return `
       <div class="detail task-details ${topClass} flex" data-nota-id="${noteId}">
         <i class="fa-solid fa-list-check fa-sm text-secondary"></i>
-        <p class="task-num-top">${completedCount}/${totalCount}</p>
+        <p class="task-num-top">${count}/${nota.tasks_id.length}</p>
       </div>
     `;
   }
@@ -330,9 +329,9 @@ function crearTasks(nota, noteId) {
     const selectedClass = task.is_selected ? "selected" : "";
     const checkedAttr = task.is_done ? "checked" : "";
     const labelClass = getTag(task.tipus);
+    console.log(nota.has_tasks);
 
-
-    if (nota.tasks_id.includes(parseInt(taskId))) {
+    if (nota.tasks_id.includes(parseInt(taskId)) && nota.has_tasks) {
       tasks += `
         <div class="task-wrapper ${selectedClass}">
           <i class="icono bi bi-grip-vertical"></i>
