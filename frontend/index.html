@@ -216,11 +216,47 @@
                 </div>
             </div>
             <section class="notebook" id="notebook">
-
             </section>
         </section>
     </div>
-
+    <div class="myModal">
+        <div class="modalContent">
+            <span class="closeTask">&times;</span>
+            <h2>New Task</h2>
+            <form action="#" id="taskForm">
+                <div class="form-group">
+                    <label for="task">Task Name</label>
+                    <input type="text" id="task" placeholder="Enter your task...">
+                </div>
+                <fieldset>
+                    <div class="field-wrapper">
+                        <label for="tag">Tag</label>
+                        <select id="tag">
+                            <option value="personal">Personal</option>
+                            <option value="project">Project</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field-wrapper">
+                        <label for="reminder">Reminder</label>
+                        <select id="reminder">
+                            <option value="week">Week before</option>
+                            <option value="day">Day before</option>
+                            <option value="hour">Hour before</option>
+                        </select>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    <label for="deadline">Deadline</label>
+                    <input type="date" id="deadline">
+                </div>
+                <button type="submit" id="add-task">Add Task</button>
+            </form>
+        </div>
+        <div class="task-list" id="task-list">
+            <!-- Tasks will be added here dynamically -->
+        </div>
+    </div>
 </body>
 
 </html>

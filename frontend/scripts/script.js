@@ -91,6 +91,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+
+    // TASK MODAL 
+    var modal = document.querySelector(".myModal");
+    var btn = document.querySelector(".close");
+
+    // Delegación de eventos para el botón que se crea dinámicamente
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("btn-addtask") ||
+            e.target.closest(".btn-addtask")) {
+            modal.style.display = "block";
+        }
+    });
+
+    if (btn) {
+        btn.onclick = function () {
+            modal.style.display = "none";
+        };
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 });
 
 
