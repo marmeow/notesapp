@@ -17,7 +17,6 @@ class Contingut(StrEnum):
 
 
 class Task(BaseModel):
-    id: int
     titol: str
     is_done: bool
     tipus: Tag
@@ -27,7 +26,6 @@ class Task(BaseModel):
 
 
 class Nota(BaseModel):
-    id: int
     titol: str
     contingut: str
     link: str | None
@@ -39,7 +37,7 @@ class Nota(BaseModel):
     notebook: str
     has_alarm: bool
     is_shared: bool
-    tasks: list[Task]
+    tasks: dict[int, Task]
     tasks_id: list[int]
     last_edit: str
     images: list[str] | None

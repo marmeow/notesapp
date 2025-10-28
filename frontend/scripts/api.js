@@ -19,6 +19,25 @@ async function fetchNotes() {
     console.error("Error en carregar les notes: ", error);
   }
 }
+async function fetchNota(noteId) {
+  try {
+    const res = await fetch(`http://localhost:8000/notes/${noteId}`);
+    const nota = await res.json();
+
+    document.querySelectorAll(".nota").forEach(elem => {
+      elem.classList.remove("active");
+    });
+
+    const activeElem = document.querySelector(`.nota[data-id="${noteId}"]`);
+    if (activeElem) {
+      activeElem.classList.add("active");
+    }
+
+    mostrarDetail(nota, noteId);
+  } catch (error) {
+    console.error("Error en carregar la nota: ", error);
+  }
+}
 
 function noteEvents() {
   const notePanel = document.getElementById("note-panel");
@@ -37,73 +56,6 @@ function noteEvents() {
   });
 }
 
-async function fetchNota(noteId) {
-  try {
-    const res = await fetch(`http://localhost:8000/notes/${noteId}`);
-    const nota = await res.json();
-
-    document.querySelectorAll(".nota").forEach(elem => {
-      elem.classList.remove("active");
-    });
-
-    const activeElem = document.querySelector(`.nota[data-id="${noteId}"]`);
-    if (activeElem) {
-      activeElem.classList.add("active");
-    }
-
-    mostrarDetail(nota);
-  } catch (error) {
-    console.error("Error en carregar la nota: ", error);
-  }
-}
-
-function eventsCheckbox() {
-
-  // Volver a seleccionar después de clonar
-  const checkboxes = document.querySelectorAll("input[type=\"checkbox\"][data-task-id]");
-
-  checkboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", async () => {
-      const taskId = parseInt(checkbox.getAttribute("data-task-id"));
-      const noteId = parseInt(checkbox.getAttribute("data-note-id"));
-      const isChecked = checkbox.checked;
-
-      // Actualizar en el servidor
-      await updateTaskStatus(noteId, taskId, isChecked);
-
-      // Actualizar TODOS los contadores de esta nota (top y bottom)
-      updateTaskCounters(noteId, taskId, isChecked);
-    });
-  });
-}
-
-function updateTaskCounters(noteId) {
-  // Buscar todas las notas en el DOM
-  const allNotes = document.querySelectorAll(`.nota[data-id="${noteId}"]`);
-
-  allNotes.forEach(noteElement => {
-    // Encontrar todos los contadores de tareas en esta nota (top y bottom)
-    const taskCounters = noteElement.querySelectorAll(`.task-details[data-nota-id="${noteId}"] .task-num-top`);
-
-    // Contar las tareas completadas
-    const checkboxes = document.querySelectorAll(`input[type="checkbox"][data-note-id="${noteId}"]`);
-    let completedCount = 0;
-    let totalCount = 0;
-
-    checkboxes.forEach(cb => {
-      totalCount++;
-      if (cb.checked) {
-        completedCount++;
-      }
-    });
-
-    // Actualizar todos los contadores
-    taskCounters.forEach(counter => {
-      counter.textContent = `${completedCount}/${totalCount}`;
-    });
-  });
-}
-
 
 async function updateTaskStatus(noteId, taskId, isChecked) {
   try {
@@ -112,7 +64,7 @@ async function updateTaskStatus(noteId, taskId, isChecked) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ is_done: isChecked }), // Asegúrate de enviar 'is_done'
+      body: JSON.stringify({ is_done: isChecked }),
     });
     const updatedTask = await res.json();
     console.log("Tarea actualizada:", updatedTask);
@@ -121,16 +73,17 @@ async function updateTaskStatus(noteId, taskId, isChecked) {
   }
 }
 
-
 function createNote(notes) {
   const container = document.querySelector(".llista-notes");
-  container.innerHTML = ""; // limpiar todo lo que habia (para el Loading...)
-  notes.forEach(nota => {
+  container.innerHTML = "";
+
+  // convertir el objeto de notas en un array de entries
+  Object.entries(notes).forEach(([noteId, nota]) => {
     const { imgPreviewDiv, typeInner, widthText } = createImgPreviewDiv(nota);
 
     const article = document.createElement("article");
     article.className = "nota flex";
-    article.setAttribute("data-id", nota.id);
+    article.setAttribute("data-id", noteId);
 
     if (nota.isActive) {
       article.classList.add("active");
@@ -140,10 +93,10 @@ function createNote(notes) {
       <div class="text-note ${widthText}">
           <div class="inner ${typeInner}">
               <h3 class="note-title">${nota.titol}</h3>
-              <p class="note-preview">${nota.contingut.slice(0, 60)}.</p>
+              <p class="note-preview">${nota.contingut.slice(0, 70)}.</p>
                 <div class="details-time flex">
                     <div class="details flex">
-                      ${createNumTasksDiv(nota, false)}
+                      ${createNumTasksDiv(nota, noteId, false)}
                       ${createNumLinksDiv(nota)}
                       ${createTag(nota)}
                     </div>
@@ -163,11 +116,9 @@ function createNote(notes) {
         ${imgPreviewDiv}
 
       <div class="detail extra-details-top flex w100">
-          ${createNumTasksDiv(nota, true)}
+          ${createNumTasksDiv(nota, noteId, true)}
           <p class="time-detail-top">${nota.time}</p>
-                  
           ${createExtraDetailsDiv(nota)}
-          
       </div>
     `;
 
@@ -175,6 +126,68 @@ function createNote(notes) {
   });
 }
 
+/*--- ESTAT TASKS ---*/
+function eventsCheckbox() {
+  // controla eventos del checbox 
+  const checkboxes = document.querySelectorAll("input[type=\"checkbox\"][data-task-id]");
+
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", async () => {
+      const taskId = checkbox.getAttribute("data-task-id");
+      const noteId = checkbox.getAttribute("data-note-id");
+      const isChecked = checkbox.checked;
+
+      updateTaskStatus(noteId, taskId, isChecked);
+      updateTaskCounters(noteId);
+    });
+  });
+}
+
+function updateTaskCounters(noteId) {
+  // actualiza contador 
+  const noteElements = document.querySelectorAll(`.nota[data-id="${noteId}"]`);
+  const checkboxes = document.querySelectorAll(`input[type="checkbox"][data-note-id="${noteId}"]`);
+
+  let completedCount = 0;
+  let totalCount = 0;
+
+  checkboxes.forEach(cb => {
+    totalCount++;
+    if (cb.checked) completedCount++;
+  });
+
+  noteElements.forEach(elem => {
+    const counters = elem.querySelectorAll(`.task-details[data-nota-id="${noteId}"] .task-num-top`);
+    counters.forEach(counter => {
+      counter.textContent = `${completedCount}/${totalCount}`;
+    });
+  });
+}
+
+function createNumTasksDiv(nota, noteId, isTop) {
+  // crea el html inicial del contador 
+  let completedCount = 0;
+
+  Object.entries(nota.tasks).forEach(([taskId, task]) => {
+    if (nota.tasks_id.includes(parseInt(taskId)) && task.is_done) {
+      completedCount++;
+    }
+  });
+
+  const totalCount = nota.tasks_id.length;
+  const topClass = isTop ? "extra-details-top" : "";
+
+  if (nota.has_tasks && totalCount > 0) {
+    return `
+      <div class="detail task-details ${topClass} flex" data-nota-id="${noteId}">
+        <i class="fa-solid fa-list-check fa-sm text-secondary"></i>
+        <p class="task-num-top">${completedCount}/${totalCount}</p>
+      </div>
+    `;
+  }
+
+  return "";
+}
 
 
 function createTag(nota) {
@@ -200,37 +213,6 @@ function createTag(nota) {
   return tagDiv;
 }
 
-
-
-function createNumTasksDiv(nota, isTop) {
-  if (!nota.has_tasks || !nota.tasks_id || nota.tasks_id.length === 0) {
-    return "";
-  }
-
-  function countCompletedTasks() {
-    let completedCount = 0;
-    nota.tasks.forEach(task => {
-      if (nota.tasks_id.includes(task.id) && task.is_done) {
-        completedCount++;
-      }
-    });
-    return completedCount;
-  }
-
-  const topClass = isTop ? "extra-details-top" : "";
-  const initialCount = countCompletedTasks();
-  const tasksHTML = `<div class="detail task-details ${topClass} flex" data-nota-id="${nota.id}" data-is-top="${isTop}">
-    <i class="fa-solid fa-list-check fa-sm text-secondary"></i>
-    <p class="task-num-top">${initialCount}/${nota.tasks_id.length}</p>
-  </div>`;
-
-  return tasksHTML;
-}
-
-
-
-
-
 function createNumLinksDiv(nota) {
   let numLinksDiv = nota.num_links ? `
         <div class="detail link-details flex">
@@ -240,6 +222,7 @@ function createNumLinksDiv(nota) {
         `: "";
   return numLinksDiv;
 }
+
 
 function createExtraDetailsDiv(nota) {
   let extraDetailsDiv = "";
@@ -263,6 +246,8 @@ function createExtraDetailsDiv(nota) {
 
   return extraDetailsDiv;
 }
+
+
 function createImgPreviewDiv(nota) {
   let imgPreviewDiv = "";
   let typeInner = "inner-noImg";
@@ -289,18 +274,18 @@ function createImgPreviewDiv(nota) {
 
 function update(notes) {
   const numNotes = document.querySelector(".num-notes");
-  numNotes.textContent = notes.length;
+  // cpntar las claves del objeto en lugar de usar .length
+  numNotes.textContent = Object.keys(notes).length;
 }
 
 
 /*----- CREAR DETALL NOTA -----*/
 
-
-function mostrarDetail(nota) {
+function mostrarDetail(nota, noteId) {
   const notebook = document.getElementById("notebook");
   notebook.innerHTML = `
     ${crearInfoNotebook(nota)}
-    ${crearContentNota(nota)}
+    ${crearContentNota(nota, noteId)}
   `;
   eventsCheckbox();
 }
@@ -319,14 +304,14 @@ function crearInfoNotebook(nota) {
   `;
 }
 
-function crearContentNota(nota) {
+function crearContentNota(nota, noteId) {
   return `
     <div class="note-content">
       <h2 class="title-note">${nota.titol}</h2>
       <p class="p-note">${nota.contingut}</p>
       ${mostrarLink(nota)}
       <div class="tasks-nota">
-        ${crearTasks(nota)}
+        ${crearTasks(nota, noteId)}
         <button class="btn btn-addtask"><i class="fa fa-plus fa-sm"></i> Add task</button>
       </div>
       ${crearImages(nota)}
@@ -338,32 +323,33 @@ function mostrarLink(nota) {
   return nota.link ? `<a href="#">${nota.link}</a>` : "";
 }
 
-function crearTasks(nota) {
+function crearTasks(nota, noteId) {
   let tasks = "";
 
-  nota.tasks.forEach(elem => {
-    const selectedClass = elem.is_selected ? "selected" : "";
-    const checkedAttr = elem.is_done ? "checked" : "";
-    const labelClass = getTag(elem.tipus);
+  Object.entries(nota.tasks).forEach(([taskId, task]) => {
+    const selectedClass = task.is_selected ? "selected" : "";
+    const checkedAttr = task.is_done ? "checked" : "";
+    const labelClass = getTag(task.tipus);
 
-    if (nota.tasks_id.includes(elem.id)) {
+
+    if (nota.tasks_id.includes(parseInt(taskId))) {
       tasks += `
         <div class="task-wrapper ${selectedClass}">
           <i class="icono bi bi-grip-vertical"></i>
           <div class="task-nota">
             <label class="check ${labelClass}">
               <input type="checkbox" ${checkedAttr}
-                data-task-id="${elem.id}"
-                data-note-id="${nota.id}">
+                data-task-id="${taskId}"
+                data-note-id="${noteId}">
               <span class="checkmark"></span>
-              ${elem.titol}
+              ${task.titol}
             </label>
             <div class="deadline-info flex">
               <div class="date-stuff flex">
-                ${crearDeadline(elem)}
-                ${crearReminder(elem)}
+                ${crearDeadline(task)}
+                ${crearReminder(task)}
               </div>
-              ${crearEditTools(elem)}
+              ${crearEditTools(task)}
             </div>
           </div>
         </div>
@@ -375,11 +361,11 @@ function crearTasks(nota) {
 }
 
 
-function getTag(tipo) {
-  switch (tipo) {
-    case "Project": return "project-check";
-    case "Personal": return "personal-check";
-    case "Other": return "other-check";
+function getTag(tipus) {
+  switch (tipus.toLowerCase()) {
+    case "project": return "project-check";
+    case "personal": return "personal-check";
+    case "other": return "other-check";
     default: return "default-check";
   }
 }
@@ -415,6 +401,4 @@ function crearImages(nota) {
     });
   }
   return imgs;
-
 }
-

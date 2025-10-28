@@ -3,6 +3,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const notePanel = document.getElementById("note-panel");
     const closeBtn = document.querySelector(".close");
 
+    function updateNotePanelDisplay() {
+        if (window.innerWidth > 1080) {
+            notePanel.style.display = "flex";
+            closeBtn.style.display = "none";
+        } else {
+            notePanel.style.display = "none";
+            closeBtn.style.display = "none";
+        }
+    }
+
     function handleNoteClick() {
         if (window.innerWidth <= 1080) {
             closeBtn.style.display = "block";
@@ -15,10 +25,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     closeBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        notePanel.style.display = "none";
-        closeBtn.style.display = "none";
+        if (window.innerWidth <= 1080) {
+            e.stopPropagation();
+            notePanel.style.display = "none";
+            closeBtn.style.display = "none";
+        }
     });
+
+    window.addEventListener("resize", updateNotePanelDisplay);
+    updateNotePanelDisplay();
+
 
 
 

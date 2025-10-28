@@ -1,8 +1,9 @@
-from models import Nota, Tag, Task  # noqa: INP001
+from copy import deepcopy  # noqa: INP001
 
-task_list: list[Task] = [
-    Task(
-        id=1,
+from models import Nota, Tag, Task
+
+task_dict: dict[int, Task] = {
+    1: Task(
         titol="Task example",
         tipus=Tag.PROJECT,
         deadline="21 Dec",
@@ -10,8 +11,7 @@ task_list: list[Task] = [
         is_selected=True,
         is_done=False,
     ),
-    Task(
-        id=2,
+    2: Task(
         titol="Dummy 101",
         tipus=Tag.PERSONAL,
         deadline="21 Dec",
@@ -19,17 +19,15 @@ task_list: list[Task] = [
         is_selected=False,
         is_done=False,
     ),
-    Task(
-        id=3,
+    3: Task(
         titol="Test 123",
         tipus=Tag.OTHER,
         deadline=None,
         reminder=None,
         is_selected=False,
         is_done=False,
-    ),  # ejemeplo nota
-    Task(
-        id=4,
+    ),
+    4: Task(
         titol="Test 456",
         tipus=Tag.OTHER,
         deadline=None,
@@ -37,16 +35,15 @@ task_list: list[Task] = [
         is_selected=False,
         is_done=False,
     ),
-]
+}
 
 
-nota_list: list[Nota] = [
-    Nota(
-        id=1,
+note_dict: dict[int, Nota] = {
+    1: Nota(
         titol="Brainstorming Session Highlights",
         contingut="Capture your team's best ideas here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link="https://contoso.sharepoint.com/sites/Admins.... exemple link created",
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2, 3],
         has_tasks=True,
         num_links=3,
@@ -59,12 +56,11 @@ nota_list: list[Nota] = [
         images=["livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
-    Nota(
-        id=2,
+    2: Nota(
         titol="Helping a local business",
         contingut="Amet minim mollit non deserunt illemco est Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link=None,
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2, 3],
         has_tasks=True,
         num_links=3,
@@ -77,12 +73,11 @@ nota_list: list[Nota] = [
         images=["livingroom2.jpg"],
         last_edit="Dec 13, 2021",
     ),
-    Nota(
-        id=3,
+    3: Nota(
         titol="Weekly Team Update",
         contingut="Document this week's accomplishments, challenges . . . .Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link="https://www.google.com/",
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2, 3],
         has_tasks=False,
         num_links=0,
@@ -95,12 +90,11 @@ nota_list: list[Nota] = [
         images=None,
         last_edit="Dec 13, 2021",
     ),
-    Nota(
-        id=4,
+    4: Nota(
         titol="Streamline Your Workflow with a good environment",
         contingut="In today's fast-paced environment, staying organized is the key to succedd. Use this space to jot down important ideas, action plans, or meeting notes. With integrated task mangament, you can turn your thoughts into actionable steps with deadlines and labels. Keep your team aligned by sharing updates and progress in real-time. Stay ahead prioritizing what matters the most.",  # noqa: E501
         link="https://www.mozilla.org/es-ES/",
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2, 3],
         has_tasks=True,
         num_links=3,
@@ -113,12 +107,11 @@ nota_list: list[Nota] = [
         images=["livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
-    Nota(
-        id=5,
+    5: Nota(
         titol="Client Meeting Notes",
         contingut="Keep a record of all client interactions in one place. \n Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link=None,
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2],
         has_tasks=True,
         num_links=3,
@@ -131,12 +124,11 @@ nota_list: list[Nota] = [
         images=None,
         last_edit="Feb 23, 2022",
     ),
-    Nota(
-        id=6,
+    6: Nota(
         titol="Project Kickoff Plan",
         contingut="Lay out the initial roadmap for your ner project. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link="https://www.mozilla.org/es-ES/",
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[1, 2, 3],
         has_tasks=True,
         num_links=0,
@@ -148,13 +140,12 @@ nota_list: list[Nota] = [
         is_shared=False,
         images=None,
         last_edit="Dec 13, 2021",
-    ),  # ejemplo para tasks
-    Nota(
-        id=7,
+    ),
+    7: Nota(
         titol="Ejemplo tasks",
         contingut="Ejemplo !!!!!!!!!!!!!!!!!!!. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue ante. Integer hendrerit aliquam arcu at laoreet. Duis ac volutpat mi, porta laoreet lorem. Mauris et maximus nibh.",  # noqa: E501
         link=None,
-        tasks=task_list,
+        tasks=deepcopy(task_dict),
         tasks_id=[4],
         has_tasks=True,
         num_links=0,
@@ -167,4 +158,4 @@ nota_list: list[Nota] = [
         images=["livingroom2.jpg", "livingroom.jpg"],
         last_edit="Dec 13, 2021",
     ),
-]
+}
