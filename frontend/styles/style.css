@@ -732,9 +732,18 @@ p.time-detail {
 .tasks-nota .btn {
     background-color: transparent;
     color: #0859bc;
-    font-size: 1.0625rem;
-    padding: 0px;
+    font-size: 18px;
+    padding: 0;
 }
+
+
+.tasks-nota .btn:hover {
+    background-color: transparent !important;
+    color: #0859bc;
+    font-size: 18px;
+    padding: 0;
+}
+
 
 .task-nota {
     border-bottom: var(--border);
@@ -787,12 +796,12 @@ p.time-detail {
     margin-left: 1.25rem;
 }
 
-.closeTask,
+.close,
 .closebtn {
     display: none;
 }
 
-.closeTask {
+.close {
     color: var(--color-primary);
     font-size: 1rem;
     border: none;
@@ -964,7 +973,6 @@ p.time-detail {
         width: 100%;
         overflow-y: scroll;
         background-color: #fff;
-        border-radius: 0.5rem;
         box-shadow: 0px 0px 5px 0px rgba(12, 26, 88, 0.65);
         display: none;
         height: 100%;
@@ -1381,25 +1389,15 @@ p.time-detail {
 
 .myModal {
     display: none;
-    /* Hidden by default */
     position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
+    z-index: 1000;
     padding-top: 100px;
-    /* Location of the box */
     left: 0;
     top: 0;
     width: 100%;
-    /* Full width */
     height: 100%;
-    /* Full height */
     overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0);
-    /* Fallback color */
     background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
 
 }
 
@@ -1455,11 +1453,35 @@ form {
 }
 
 .modalContent input[type="date"]:hover,
-.modalContent select:hover {
+.modalContent select:hover,
+.modalContent input[type="text"]:hover,
+.modalContent input[type="text"]:focus {
     outline: none;
     border-color: var(--color-primary);
     background: white;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+
+.deadline-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    /* Espacio entre el checkbox y el texto */
+}
+
+
+.deadline-container label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+}
+
+
+#deadlineCheck {
+    accent-color: var(--color-primary);
 }
 
 /* input[type="text"]::placeholder {
@@ -1494,11 +1516,11 @@ fieldset {
     background-color: var(--color-primary);
 }
 
-button:hover {
+.modalContent button:hover {
     transform: translateY(-2px);
 }
 
-button:active {
+.modalContent button:active {
     transform: translateY(0);
 }
 
@@ -1515,7 +1537,7 @@ button:active {
 
 .closeTask:hover,
 .closeTask:focus {
-    color: #000;
+    color: var(--color-secondary);
 }
 
 .modalContent {

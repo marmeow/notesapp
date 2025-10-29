@@ -37,3 +37,28 @@ async def update_task(
         return nota.tasks[task_id]
 
     return None
+
+
+@app.post("/notes/{note_id}/tasks/")
+async def create_task(note_id: int, task_data: Task) -> dict | None:
+    nota = note_dict.get(note_id)
+    if not nota:
+        return None
+
+    new_id = max(nota.tasks.keys(), default=0) + 1
+    nota.tasks[new_id] = task_data
+    nota.tasks_id.append(new_id)
+    nota.has_tasks = True
+
+    return {"task_id": new_id, "task": task_data}
+
+
+@app.delete("/notes/{note_id}/tasks/{task_id}")
+async def delete_task(note_id: int, task_id: int) -> dict | None:
+    nota = note_dict.get(note_id)
+    if nota and task_id in nota.tasks:
+        del nota.tasks[task_id]
+        nota.tasks_id.remove(task_id)
+        nota.has_tasks = bool(nota.tasks_id)
+        return {"deleted": True, "task_id": task_id}
+    return {"deleted": False}
