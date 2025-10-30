@@ -232,16 +232,16 @@
                     <div class="field-wrapper">
                         <label for="tag">Tag</label>
                         <select id="tag">
-                            <option value="personal">None</option>
+                            <option value="none">None</option>
                             <option value="personal">Personal</option>
                             <option value="project">Project</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="field-wrapper">
-                        <label for="reminder">Reminder</label>
+                        <label for="reminder" aria-placeholder="Hour before">Reminder</label>
                         <select id="reminder">
-                            <option value="week">None</option>
+                            <option value="none">None</option>
                             <option value="week">Week before</option>
                             <option value="day">Day before</option>
                             <option value="hour">Hour before</option>
@@ -250,12 +250,16 @@
                 </fieldset>
                 <div class="form-group">
                     <div class="deadline-container">
-                        <input type="checkbox" name="deadlineCheck" id="deadlineCheck" checked="true">
+                        <input type="checkbox" name="deadlineCheck" id="deadlineCheck" checked>
                         <label for="deadlineCheck" class="deadlinelbl">Deadline</label>
                     </div>
-                    <input type="date" id="deadline">
+                    <div class="datereminder flex">
+                        <input type="date" id="deadline">
+                        <input type="time" id="appointment" name="appointment"></i>
+                    </div>
+
                 </div>
-                <button type="submit" id="add-task">Add Task</button>
+                <button type=" submit" id="add-task">Add Task</button>
 
             </form>
         </div>

@@ -1,4 +1,4 @@
-from datetime import datetime  # noqa: INP001
+from datetime import datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, field_validator
@@ -13,7 +13,7 @@ class Tag(StrEnum):
 class Task(BaseModel):
     titol: str
     is_done: bool
-    tipus: Tag
+    tipus: Tag | None
     deadline: str | None
     reminder: str | None
     is_selected: bool
@@ -25,21 +25,25 @@ class Task(BaseModel):
             return None
         try:
             dt = datetime.fromisoformat(value)
-            return dt.strftime("%d %b")  # "21 Dec"
         except ValueError:
-            msg = "Invalid deadline format. Must be ISO date string."
-            raise ValueError(msg) from ValueError
+            return None
+        return dt.strftime("%d %b")  # "21 Dec"
 
     @field_validator("reminder", mode="after")
+    @classmethod
     def validate_reminder(cls, value: str) -> str | None:
         if value in (None, "", "None"):
             return None
-        try:
-            dt = datetime.fromisoformat(value)
-            return dt.strftime("%d %b, %I:%M %p")  # "20 Dec, 9:00 AM"
-        except ValueError:
-            msg = "Invalid reminder format. Must be ISO date string."
-            raise ValueError(msg) from ValueError
+
+        datestr, timestr = value.split(",")
+
+        # str a datetime
+        datedt = datetime.fromisoformat(datestr)
+        timedt = datetime.strptime(timestr, "%H:%M:%S")  # noqa: DTZ007
+        # datetime a str
+        date = datedt.strftime("%d %b")
+        time = timedt.strftime("%I:%M %p")
+        return f"{date}, {time}"  # 21 Dec, 10:30 AM"
 
 
 class Nota(BaseModel):
@@ -48,7 +52,6 @@ class Nota(BaseModel):
     link: str | None
     has_tasks: bool
     num_links: int
-    # cambiar a que sea con las tasques
     tags: Tag | None
     num_tags: int
     time: str

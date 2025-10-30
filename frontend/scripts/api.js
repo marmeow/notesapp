@@ -288,6 +288,8 @@ function mostrarDetail(nota, noteId) {
   `;
   eventsCheckbox();
   initAddTaskButton(noteId);
+  updateTaskCounters(noteId);
+
 }
 
 function crearInfoNotebook(nota) {
@@ -362,12 +364,17 @@ function crearTasks(nota, noteId) {
 
 
 function getTag(tipus) {
-  switch (tipus.toLowerCase()) {
-    case "project": return "project-check";
-    case "personal": return "personal-check";
-    case "other": return "other-check";
-    default: return "default-check";
+  if (tipus) {
+    switch (tipus.toLowerCase()) {
+      case "project": return "project-check";
+      case "personal": return "personal-check";
+      case "other": return "other-check";
+      default: return "";
+    }
+  } else {
+    return "other-check";
   }
+
 }
 
 function crearDeadline(task) {
@@ -406,80 +413,94 @@ function crearImages(nota) {
 
 
 /*CREAR TASKS*/
-
+/*https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript*/
 function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
+
+
 /*https://www.geeksforgeeks.org/javascript/task-scheduler-using-html-css-and-js/*/
 function getTaskData() {
   const taskInput = document.getElementById("task");
   const tagInput = document.getElementById("tag");
-  const reminderInput = document.getElementById("reminder");
+  const reminderTypeInput = document.getElementById("reminder");
+  const appointmentInput = document.getElementById("appointment");
   const deadlineInput = document.getElementById("deadline");
   const deadlineCheck = document.getElementById("deadlineCheck");
 
   const titol = taskInput.value.trim();
-  const tipus = capitalizeFirstLetter(tagInput.value);
-  const reminderOption = reminderInput.value.trim();
-  const deadlineRaw = deadlineInput.value;
+  if (!titol) {
+    alert("Task name needed");
+    return;
+  }
 
-  let deadlineDate = deadlineCheck.checked ? new Date(deadlineRaw) : null;
+  let tipus = tagInput.value.trim() === "none" ? null : capitalizeFirstLetter(tagInput.value.trim());
+
+  let deadline = null;
   let reminder = null;
 
+  if (deadlineCheck.checked) {
 
-
-  if (deadlineDate) {
-    switch (reminderOption) {
-      case "day":
-        reminder = new Date(deadlineDate);
-        reminder.setDate(reminder.getDate() - 1);
-        break;
-      case "week":
-        reminder = new Date(deadlineDate);
-        reminder.setDate(reminder.getDate() - 7);
-        break;
-      case "hour":
-        reminder = new Date(deadlineDate);
-        reminder.setHours(reminder.getHours() - 1);
-        break;
+    if (!deadlineInput.value) {
+      alert("Deadline needed");
+      return;
     }
+
+    const deadlineDate = deadlineInput.value ? new Date(deadlineInput.value) : null; // str a date
+    const currentDate = new Date();
+
+    deadline = deadlineDate ? deadlineDate.toISOString() : null; //date a str format ISO 
+    const time = appointmentInput.value;
+    const reminderType = reminderTypeInput.value;
+
+    if (deadlineDate && time && reminderType !== "none") {
+      reminder = calcularReminder(reminderType, deadlineDate, time);
+    }
+
+    if (deadlineDate <= currentDate) {
+      alert("Please select an upcoming date for the deadline.");
+      return;
+    }
+
   }
 
   return {
     titol,
     tipus,
-    deadline: deadlineDate ? deadlineDate : null,
-    reminder: reminder ? reminder : null,
+    deadline,
+    reminder,
     is_selected: false,
     is_done: false
   };
 }
 
 
-
 function initAddTaskButton(noteId) {
   const addTaskBtn = document.getElementById("add-task");
 
   if (addTaskBtn) {
-    addTaskBtn.addEventListener("click", async () => {
+    // Elimina listeners previos
+    const newBtn = addTaskBtn.cloneNode(true);
+    addTaskBtn.parentNode.replaceChild(newBtn, addTaskBtn);
+
+    newBtn.addEventListener("click", async () => {
       const taskData = getTaskData();
       if (!taskData) return;
 
       await sendTaskToServer(noteId, taskData);
-
-      // Refrescar la nota para mostrar la nueva tarea
       fetchNota(noteId);
+
       console.log("Datos enviados:", taskData);
 
-      // Limpiar los campos del formulario
-      document.getElementById("task").value = null;
-      document.getElementById("tag").value = "None";
-      document.getElementById("reminder").value = "None";
-      document.getElementById("deadline").value = null;
+      // Limpiar campos
+      document.getElementById("task").value = "";
+      document.getElementById("tag").value = "personal";
+      document.getElementById("appointment").value = "";
+      document.getElementById("deadline").value = "";
+      document.getElementById("deadlineCheck").checked = false;
     });
   }
 }
-
 
 
 async function sendTaskToServer(noteId, taskData) {
@@ -491,44 +512,37 @@ async function sendTaskToServer(noteId, taskData) {
       },
       body: JSON.stringify(taskData),
     });
-
-    if (!res.ok) {
-      throw new Error(`Server responded with status ${res.status}`);
-    }
-
     const updatedTask = await res.json();
     console.log("Tarea actualizada:", updatedTask);
   } catch (error) {
-    console.error("Error al enviar la tarea:", error);
-    if (error instanceof Response) {
-      const detail = await error.json();
-      console.error("Detalle del error:", detail);
-      alert("Error al enviar la tarea:\n" + JSON.stringify(detail, null, 2));
-    } else {
-      console.error("Error inesperado:", error);
-    }
+    console.error("Error al enviar la tasca:", error);
   }
 }
 
 
+function calcularReminder(reminderType, deadlineDate, time) {
+  if (!deadlineDate || !time || reminderType === "none") return null;
 
+  const [hour, minute] = time.split(":").map(Number);
 
+  const reminderDate = new Date(deadlineDate);
+  reminderDate.setHours(hour);
+  reminderDate.setMinutes(minute);
+  reminderDate.setSeconds(0);
 
+  switch (reminderType) {
+    case "day":
+      reminderDate.setDate(reminderDate.getDate() - 1);
+      break;
+    case "week":
+      reminderDate.setDate(reminderDate.getDate() - 7);
+      break;
+    case "hour":
+      reminderDate.setHours(reminderDate.getHours() - 1);
+      break;
+  }
 
-// async function deleteTask(noteId, taskId) {
-//   try {
-//     const res = await fetch(`http://localhost:8000/notes/${noteId}/tasks/${taskId}`, {
-//       method: "DELETE"
-//     });
-
-//     if (!res.ok) {
-//       throw new Error(`Error al eliminar la tarea: ${res.status}`);
-//     }
-
-//     const result = await res.json();
-//     console.log("Tarea eliminada:", result);
-//     fetchNota(noteId); // refresca la nota
-//   } catch (error) {
-//     console.error("Error al eliminar la tarea:", error);
-//   }
-// }
+  const fecha = reminderDate.toISOString().split("T")[0]; // T separador entre fecha y hora 
+  const hora = reminderDate.toTimeString().slice(0, 8);
+  return `${fecha},${hora}`;
+}
