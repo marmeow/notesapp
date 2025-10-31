@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime  # noqa: INP001
 from enum import StrEnum
 
 from pydantic import BaseModel, field_validator

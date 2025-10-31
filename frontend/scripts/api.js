@@ -418,7 +418,6 @@ function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
-
 /*https://www.geeksforgeeks.org/javascript/task-scheduler-using-html-css-and-js/*/
 function getTaskData() {
   const taskInput = document.getElementById("task");
@@ -431,10 +430,10 @@ function getTaskData() {
   const titol = taskInput.value.trim();
   if (!titol) {
     alert("Task name needed");
-    return;
+    return null;
   }
 
-  let tipus = tagInput.value.trim() === "none" ? null : capitalizeFirstLetter(tagInput.value.trim());
+  let tipus = tagInput.value === "none" ? null : capitalizeFirstLetter(tagInput.value);
 
   let deadline = null;
   let reminder = null;
@@ -443,23 +442,27 @@ function getTaskData() {
 
     if (!deadlineInput.value) {
       alert("Deadline needed");
-      return;
+      return null;
     }
 
     const deadlineDate = deadlineInput.value ? new Date(deadlineInput.value) : null; // str a date
     const currentDate = new Date();
+
+    if (deadlineDate <= currentDate) {
+      alert("Please select an upcoming date for the deadline.");
+      return null;
+    }
 
     deadline = deadlineDate ? deadlineDate.toISOString() : null; //date a str format ISO 
     const time = appointmentInput.value;
     const reminderType = reminderTypeInput.value;
 
     if (deadlineDate && time && reminderType !== "none") {
-      reminder = calcularReminder(reminderType, deadlineDate, time);
-    }
-
-    if (deadlineDate <= currentDate) {
-      alert("Please select an upcoming date for the deadline.");
-      return;
+      reminder = calcularReminder(reminderType, deadlineDate, time, currentDate);
+      // si calcularReminder retorna null, significa que hay un error
+      if (reminder === null) {
+        return null;
+      }
     }
 
   }
@@ -475,34 +478,6 @@ function getTaskData() {
 }
 
 
-function initAddTaskButton(noteId) {
-  const addTaskBtn = document.getElementById("add-task");
-
-  if (addTaskBtn) {
-    // Elimina listeners previos
-    const newBtn = addTaskBtn.cloneNode(true);
-    addTaskBtn.parentNode.replaceChild(newBtn, addTaskBtn);
-
-    newBtn.addEventListener("click", async () => {
-      const taskData = getTaskData();
-      if (!taskData) return;
-
-      await sendTaskToServer(noteId, taskData);
-      fetchNota(noteId);
-
-      console.log("Datos enviados:", taskData);
-
-      // Limpiar campos
-      document.getElementById("task").value = "";
-      document.getElementById("tag").value = "personal";
-      document.getElementById("appointment").value = "";
-      document.getElementById("deadline").value = "";
-      document.getElementById("deadlineCheck").checked = false;
-    });
-  }
-}
-
-
 async function sendTaskToServer(noteId, taskData) {
   try {
     const res = await fetch(`http://localhost:8000/notes/${noteId}/tasks/`, {
@@ -512,17 +487,53 @@ async function sendTaskToServer(noteId, taskData) {
       },
       body: JSON.stringify(taskData),
     });
+
     const updatedTask = await res.json();
-    console.log("Tarea actualizada:", updatedTask);
+    console.log("updatedTask", updatedTask);
+    return updatedTask;
   } catch (error) {
     console.error("Error al enviar la tasca:", error);
+    alert("Error occurred while generating the task. Please, try again.");
+    return null;
+  }
+}
+
+function initAddTaskButton(noteId) {
+  const addTaskBtn = document.getElementById("add-task");
+  const modal = document.querySelector(".myModal");
+  const form = document.getElementById("taskForm");
+
+  if (addTaskBtn) {
+    // eliminar listeners previos
+    const newBtn = addTaskBtn.cloneNode(true);
+    addTaskBtn.parentNode.replaceChild(newBtn, addTaskBtn);
+
+    newBtn.addEventListener("click", async (e) => {
+      e.preventDefault(); // no hace form submit
+
+      const taskData = getTaskData();
+      if (!taskData) return;
+
+      const result = await sendTaskToServer(noteId, taskData);
+
+      if (result) {
+        await fetchNota(noteId);
+        console.log(taskData);
+
+        // limpia todo el form 
+        form.reset();
+
+        modal.style.display = "none";
+      }
+    });
   }
 }
 
 
-function calcularReminder(reminderType, deadlineDate, time) {
+function calcularReminder(reminderType, deadlineDate, time, currentDate) {
   if (!deadlineDate || !time || reminderType === "none") return null;
 
+  // separa str  [hr, min] y lo convierte en Number 
   const [hour, minute] = time.split(":").map(Number);
 
   const reminderDate = new Date(deadlineDate);
@@ -542,7 +553,12 @@ function calcularReminder(reminderType, deadlineDate, time) {
       break;
   }
 
-  const fecha = reminderDate.toISOString().split("T")[0]; // T separador entre fecha y hora 
+  if (reminderDate <= currentDate) {
+    alert("Please select a different reminder.");
+    return null;
+  }
+  console.log(reminderDate);
+  const date = reminderDate.toISOString().split("T")[0]; // T separador entre fecha y hora 
   const hora = reminderDate.toTimeString().slice(0, 8);
-  return `${fecha},${hora}`;
+  return `${date},${hora}`;
 }
